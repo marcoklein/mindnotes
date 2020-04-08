@@ -1,0 +1,41 @@
+{
+  "name": "mindnotes",
+  "version": "0.0.1",
+  "description": "Text driven mind map creation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "test:watch": "npm run test -- --watch-files src/**/*.ts --watch --watch-extensions ts --full-trace",
+    "serve": "parcel src/index.html -d out",
+    "build": "parcel build src/index.ts -d out --out-file index.min.js",
+    "build:watch": "parcel watch src/index.ts -d out --out-file index.min.js --no-hmr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcoklein/mindnotes.git"
+  },
+  "keywords": [
+    "Mindmap",
+    "text2mindmap"
+  ],
+  "author": "Marco Klein",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/marcoklein/mindnotes/issues"
+  },
+  "homepage": "https://github.com/marcoklein/mindnotes#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/d3": "^5.7.2",
+    "@types/mocha": "^7.0.2",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
+    "parcel-bundler": "^1.12.4",
+    "ts-node": "^8.8.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "d3": "^5.15.0",
+    "winston": "^3.2.1"
+  }
+}
