@@ -5,9 +5,9 @@ import { MindNotesLexer } from "./lexer/MindNotesLexer";
 import { LineParser } from "./LineParser";
 import { ParserTree } from "./tree/ParserTree";
 import { ParseEvent } from "../events/EventTypes";
-import { PARSER_LOGGER } from "./logger";
+import { parserLogger } from "./logger.parser";
 
-const log = PARSER_LOGGER('parser');
+const log = parserLogger('parser');
 
 export interface ParserResult {
     tree: ParserTree;

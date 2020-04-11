@@ -1,10 +1,10 @@
 import { ParsedLine } from "./MindNotesParser";
 import { ParserTree } from "./tree/ParserTree";
 import { ParserNode } from "./tree/ParserNode";
-import { PARSER_LOGGER } from "./logger";
+import { parserLogger } from "./logger.parser";
 import { ParseEvent, EditNodeEvent, DeleteNodeEvent, AddNodeEvent } from "../events/EventTypes";
 
-const log = PARSER_LOGGER('line');
+const log = parserLogger('line');
 
 /**
  * Handles parsing of a single line.

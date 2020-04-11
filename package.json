@@ -19,7 +19,7 @@
     "text2mindmap"
   ],
   "author": "Marco Klein",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/marcoklein/mindnotes/issues"
   },
@@ -35,7 +35,6 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "d3": "^5.15.0",
-    "winston": "^3.2.1"
+    "d3": "^5.15.0"
   }
 }

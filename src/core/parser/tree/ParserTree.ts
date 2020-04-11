@@ -1,6 +1,6 @@
 import { ParserNode } from "./ParserNode";
-import { PARSER_LOGGER } from "../logger";
-const log = PARSER_LOGGER('tree');
+import { parserLogger } from "../logger.parser";
+const log = parserLogger('tree');
 
 /**
  * Manages the insertion and deletion of nodes and lines.

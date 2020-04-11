@@ -2,9 +2,9 @@ import { Lexem } from "../lexer/Lexem";
 import { LineParser } from "../LineParser";
 import { ParserTree } from "./ParserTree";
 import { LEXEM_EMPTY_LINE, LEXEM_NODE_TEXT } from "../lexer/LexemType";
-import { PARSER_LOGGER } from "../logger";
+import { parserLogger } from "../logger.parser";
 import { AddNodeEvent } from "../../events/EventTypes";
-const log = PARSER_LOGGER('node');
+const log = parserLogger('node');
 
 
 /**
