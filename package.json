@@ -7,7 +7,9 @@
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "test:watch": "npm run test -- --watch-files src/**/*.ts --watch --watch-extensions ts --full-trace",
     "serve": "parcel src/index.html -d out",
-    "build": "parcel build src/index.ts -d out"
+    "build": "npm run clean && parcel build src/index.html -d out --public-url ./",
+    "deploy": "npm run build && gh-pages -d out",
+    "clean": "rimraf .cache out"
   },
   "repository": {
     "type": "git",
@@ -28,8 +30,10 @@
     "@types/d3": "^5.7.2",
     "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
+    "gh-pages": "^2.2.0",
     "mocha": "^7.1.1",
     "parcel-bundler": "^1.12.4",
+    "rimraf": "^3.0.2",
     "ts-node": "^8.8.1",
     "typescript": "^3.8.3"
   },

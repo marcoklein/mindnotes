@@ -27,7 +27,7 @@ export class MindmapView {
         // setup svg
         let width = 400;
         let height = 400;
-        let svg = d3.select('#renderContainer')
+        let svg = d3.select('svg')
             .attr('width', width)
             .attr('height', height);
         svg.style('background-color', 'lightblue');
