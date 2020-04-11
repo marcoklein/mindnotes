@@ -7,8 +7,7 @@
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "test:watch": "npm run test -- --watch-files src/**/*.ts --watch --watch-extensions ts --full-trace",
     "serve": "parcel src/index.html -d out",
-    "build": "parcel build src/index.ts -d out --out-file index.min.js",
-    "build:watch": "parcel watch src/index.ts -d out --out-file index.min.js --no-hmr"
+    "build": "parcel build src/index.ts -d out"
   },
   "repository": {
     "type": "git",
