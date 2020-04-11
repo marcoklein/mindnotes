@@ -1032,4 +1032,4 @@ parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcel
 },{"../logger":"WOs9","../core/parser/MindNotesParser":"KKpR"}],"QCba":[function(require,module,exports) {
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("./core/events/EventHandler"),r=require("./renderer/EventRenderer"),t=require("./editor/TextEditor");!function(){var n=new e.SerializedEventEmitter;new r.EventRenderer(n),new t.TextEditor(n)}();
 },{"./core/events/EventHandler":"EUAH","./renderer/EventRenderer":"i9Ww","./editor/TextEditor":"FKBH"}]},{},["QCba"], null)
-//# sourceMappingURL=/src.cf821e05.js.map
+//# sourceMappingURL=src.cf821e05.js.map
