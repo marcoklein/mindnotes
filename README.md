@@ -14,3 +14,11 @@ src/
     editor/         <-- Text editor to modify the mindmap
     renderer/       <-- Rendering the mindmap
 ```
+
+# Development
+
+## GitHub Pages
+
+GitHub Pages is used to deploy the website. The used plugin `gh-pages` builds a fresh copy to the `gh-pages` branch by running the command `npm run deploy`.
+
+This setup will always deploy the website for the currently active branch.
