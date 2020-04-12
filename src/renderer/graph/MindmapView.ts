@@ -3,12 +3,11 @@ import { GraphNode } from './GraphNode';
 import { GraphLinkData } from './GraphLink';
 import { GraphData } from './GraphData';
 import { rendererLogger } from '../../logger';
-import { BrowserUtils } from './Utils';
+import { BrowserUtils } from './BrowserUtils';
 const log = rendererLogger('mindmap-view');
 
 type D3NodeType = d3.Selection<any, GraphNode, SVGGElement, unknown>;
 type D3LinkType = d3.Selection<SVGLineElement, GraphLinkData, SVGGElement, unknown>;
-
 
 /**
  * Controller for the visual mindmap representation.
@@ -45,26 +44,13 @@ export class MindmapView {
         this.link = this.g.append('g').selectAll('link');
         this.node = this.g.append('g').selectAll('node');
 
-
-        // enable zoom and drag
-        this.enableDragging(this.g);
-        this.enableZooming(svg);
+        // enable zoom
+        svg.call(<any> d3.zoom().scaleExtent([.1, 4]).on('zoom', () => this.g.attr('transform', d3.event.transform)));
 
         // render initial data and start simulation
         this.renderNodes();
         this.renderLinks();
         this.restartSimulation();
-    }
-
-    private enableDragging(container: d3.Selection<any, any, any, any>) {
-    }
-
-    private enableZooming(container: d3.Selection<any, any, any, any>) {
-        container.call(
-            d3.zoom()
-                .scaleExtent([.1, 4])
-                .on('zoom', () => this.g.attr('transform', d3.event.transform))
-        );
     }
 
     /**

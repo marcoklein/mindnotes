@@ -1,4 +1,3 @@
-
 /**
  * Helper canvas to calculate text sizes.
  */
