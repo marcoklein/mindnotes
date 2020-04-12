@@ -13,10 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Git Identity
-        run: |
-          git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-          git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -24,5 +20,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+      - name: Git Identity
+        run: |
+          git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+          git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
       - run: npm ci
       - run: npm run deploy
