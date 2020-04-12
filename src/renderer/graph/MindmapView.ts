@@ -2,9 +2,13 @@ import * as d3 from 'd3';
 import { GraphNode } from './GraphNode';
 import { GraphLinkData } from './GraphLink';
 import { GraphData } from './GraphData';
+import { rendererLogger } from '../../logger';
+import { BrowserUtils } from './Utils';
+const log = rendererLogger('mindmap-view');
 
 type D3NodeType = d3.Selection<any, GraphNode, SVGGElement, unknown>;
 type D3LinkType = d3.Selection<SVGLineElement, GraphLinkData, SVGGElement, unknown>;
+
 
 /**
  * Controller for the visual mindmap representation.
@@ -17,7 +21,7 @@ export class MindmapView {
     /**
      * Graphics within SVG for rendering.
      */
-    private container: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
+    private g: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
 
     private readonly graphData: GraphData;
 
@@ -25,33 +29,42 @@ export class MindmapView {
 
     constructor() {
         // setup svg
+        // TODO get sizes of svg element - resize dynamically
         let width = 400;
         let height = 400;
         let svg = d3.select('svg')
             .attr('width', width)
             .attr('height', height);
         svg.style('background-color', 'lightblue');
-        this.container = svg.append('g');
+        this.g = svg.append('g');
 
         // base graph data
         this.graphData = new GraphData(this);
-
         // create simulation
         this.simulation = this.createGraphLayout(this.graphData, width, height);
+        this.link = this.g.append('g').selectAll('link');
+        this.node = this.g.append('g').selectAll('node');
 
-        // render links and nodes
-        this.link = this.container.append('g').selectAll('link');
-        this.node = this.container.append('g').selectAll('node');
 
-        // enable zooming
-        svg.call(
-            <any> d3.zoom()
-                .scaleExtent([.1, 4])
-                .on('zoom', () => this.container.attr('transform', d3.event.transform))
-        );
+        // enable zoom and drag
+        this.enableDragging(this.g);
+        this.enableZooming(svg);
 
+        // render initial data and start simulation
         this.renderNodes();
         this.renderLinks();
+        this.restartSimulation();
+    }
+
+    private enableDragging(container: d3.Selection<any, any, any, any>) {
+    }
+
+    private enableZooming(container: d3.Selection<any, any, any, any>) {
+        container.call(
+            d3.zoom()
+                .scaleExtent([.1, 4])
+                .on('zoom', () => this.g.attr('transform', d3.event.transform))
+        );
     }
 
     /**
@@ -81,6 +94,13 @@ export class MindmapView {
         return this.graphData.nodesMap[id];
     }
 
+    /**
+     * Creates the graph physics.
+     * 
+     * @param graphData 
+     * @param width 
+     * @param height 
+     */
     private createGraphLayout(graphData: GraphData, width: number, height: number) {
         return d3.forceSimulation(graphData.getNodes())
             .force('charge', d3.forceManyBody().strength(-3000))
@@ -111,23 +131,43 @@ export class MindmapView {
         }
 
         this.node = this.node.data(this.graphData.getNodes(), n => n.id);
-
         this.node.exit().remove();
+
         const nodeGraphics = this.node.enter().append('g');
+        nodeGraphics.attr('x', () => Math.random() * 5000)
+        
+        nodeGraphics.call(
+            <any> d3.drag()
+            .subject(this.dragsubject)
+            .on('start', this.dragstarted)
+            .on('drag', this.dragged)
+            .on('end', this.dragended)
+        );
         nodeGraphics
-            .append('ellipse')
-                .attr('rx', 40)
-                .attr('ry', 20)
-                .attr('fill', '#888');
+            .append('rect');
         nodeGraphics
             .append('text')
+                .attr('font-size', '14px')
+                .attr('font-family', 'sans-serif')
                 .attr('text-anchor', 'middle')
                 .attr('alignment-baseline', 'central')
+                .attr('fill', 'black')
                 .text(n => n.getText());
         this.node = this.node
             .merge(nodeGraphics);
+
+        // TODO wrap labels and use node().getComputedTextLength() - https://bl.ocks.org/mbostock/7555321
+        const nodeRect: D3NodeType = this.node.selectAll('rect');
+        nodeRect
+            .attr('width', n => BrowserUtils.calculateTextWidth(n.getText(), 14, 'sans-serif') + 10)
+            .attr('x', n => -BrowserUtils.calculateTextWidth(n.getText(), 14) / 2 - 5)
+            .attr('height', 30)
+            .attr('y', -19)
+            .attr('rx', 8)
+            .attr('ry', 8)
+            .attr('fill', '#888');
             
-        // ensure updated text
+        // ensure text updates
         const texts: D3NodeType = this.node.selectAll('text');
         texts.text(n => n.getText());
     }
@@ -164,6 +204,32 @@ export class MindmapView {
             return x;
         }
         return 0;
+    }
+
+    /* Dragging Callbacks */
+
+    /**
+     * Returns the dragged node.
+     */
+    private dragsubject = (d: any) => {
+        return d;
+    }
+    
+    private dragstarted = () => {
+        if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+        d3.event.subject.fx = d3.event.subject.x;
+        d3.event.subject.fy = d3.event.subject.y;
+    }
+    
+    private dragged = () => {
+        d3.event.subject.fx = d3.event.x;
+        d3.event.subject.fy = d3.event.y;
+    }
+    
+    private dragended = () => {
+        if (!d3.event.active) this.simulation.alphaTarget(0);
+        d3.event.subject.fx = null;
+        d3.event.subject.fy = null;
     }
 
 }
