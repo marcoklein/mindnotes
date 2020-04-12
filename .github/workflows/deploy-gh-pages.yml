@@ -15,14 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.DEPLOY_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Git Identity
-        run: |
-          git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-          git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
       - run: npm ci
-      - run: npm run deploy
+      - name: Publish to GitHub Pages
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/marcoklein/mindnotes.git
+          npm run deploy -- -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
