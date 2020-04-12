@@ -1,6 +1,8 @@
 
-const canvas = document.createElement('canvas');
-const context = <CanvasRenderingContext2D> canvas.getContext('2d');
+/**
+ * Helper canvas to calculate text sizes.
+ */
+const context = <CanvasRenderingContext2D> document.createElement('canvas').getContext('2d');
 
 export abstract class BrowserUtils {
     private constructor(){};
