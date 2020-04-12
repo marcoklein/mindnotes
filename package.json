@@ -7,8 +7,8 @@
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "test:watch": "npm run test -- --watch-files src/**/*.ts --watch --watch-extensions ts --full-trace",
     "serve": "parcel src/index.html -d out",
-    "build": "npm run clean && parcel build src/index.html -d out --public-url ./",
-    "deploy": "npm run build && gh-pages -d out",
+    "build": "npm run clean & parcel build src/index.html -d out --public-url ./",
+    "deploy": "npm run build & gh-pages -d out",
     "clean": "rimraf .cache out"
   },
   "repository": {
