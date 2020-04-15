@@ -4,6 +4,8 @@ import { ParserTree } from "./ParserTree";
 import { LEXEM_EMPTY_LINE, LEXEM_NODE_TEXT } from "../lexer/LexemType";
 import { parserLogger } from "../logger.parser";
 import { AddNodeEvent, EditNodeEvent } from "../../events/EventTypes";
+import { ParserNodeLine } from "./ParserNodeLine";
+import { ParserNodeAttributes } from "./ParserNodeAttributes";
 const log = parserLogger('node');
 
 
@@ -18,7 +20,7 @@ export class ParserNode {
      */
     id: number;
     tree: ParserTree;
-    parent: ParserNode | undefined;
+    _parent: ParserNode | undefined;
     /**
      * Preceding sibling.
      */
@@ -36,6 +38,10 @@ export class ParserNode {
      * First text line of the node.
      */
     headText: string;
+
+    // attributes: ParserNodeAttributes = {
+    //     text: ''
+    // };
 
     /**
      * Creates a new node instance.
@@ -115,7 +121,6 @@ export class ParserNode {
             log.warn('Unhandled token: ', token?.type, token?.content);
         }
     }
-
     
     private changeNodeIndentation(lineParser: LineParser, newIndent: number) {
         log.debug('Node indentation update');
@@ -167,7 +172,7 @@ export class ParserNode {
                         newParent
                     }*/
                     // TODO update siblings
-                    this.parent = newParent;
+                    this.changeParent(newParent, lineParser);
                 //}
             }
             const event = new EditNodeEvent(this.id, newParent?.id, this.headText);
@@ -175,5 +180,63 @@ export class ParserNode {
         }
     }
     
+    /**
+     * Updates the parent for the node.
+     * All internal siblings of the new parent and of this node are updated accordingly.
+     * 
+     * @param newParent 
+     */
+    public changeParent(newParent: ParserNode | undefined, lineParser: LineParser) {
+        const curParent = this._parent;
+        if (curParent === newParent) {
+            return;
+        }
+        if (curParent) {
+            // delete from current parent
+            if (this.predecessor) {
+                this.predecessor.successor = this.predecessor;
+            }
+            if (this.successor) {
+                this.successor = this.predecessor;
+            }
+        }
+        if (newParent) {
+            // add/insert to new parent
+            // find previous node
+            const prevNode = this.findPreviousNode(lineParser);
+            // TODO see also addNewParserNode in ParserTree for inspiration how it should update
+        }
+        this._parent = newParent;
+    }
+
+    private findPreviousNode(lineParser: LineParser) {
+        for (let i = lineParser.line - 1; i >= 0 ; i --) {
+            if (this.tree.getNodeOfLine(i) !== this) {
+                return this.tree.getNodeOfLine(i);
+            }
+        }
+    }
+
+    private updatePredecessor(lineParser: LineParser) {
+
+    }
+
+    private updateSuccessor(lineParser: LineParser) {
+
+    }
+
+    /**
+     * Merges two nodes. The succeeding node is merged into the preceding node.
+     * All attributes are combined accordingly.
+     * 
+     * @param other 
+     */
+    private merge(other: ParserNode) {
+
+    }
+    
+    public get parent() {
+        return this._parent;
+    }
 
 }
