@@ -538,6 +538,52 @@ describe('Parser Test', () => {
                 ]
             );
         });
+        
+        it('Should change the parent node for decreased indentation', () => {
+            // given
+            const existingLines = [
+                'rootNode',
+                '  childA',
+                '    childB',
+            ];
+            const existingContent = existingLines.join('\n');
+            parser.parse(existingContent);
+
+            // when
+            const result = parser.edit(2, 0, 2, 2, '');
+            const events = result.events;
+            const errors = result.errors;
+
+            // then
+            expect(events).to.have.deep.ordered.members(
+                [
+                    <EditNodeEvent> {name: EditNodeEvent.NAME, id: 3, parentId: 1, text: "childB"},
+                ]
+            );
+        });
+        
+        it('Should change the parent node for increased indentation', () => {
+            // given
+            const existingLines = [
+                'rootNode',
+                '  childA',
+                '  childB',
+            ];
+            const existingContent = existingLines.join('\n');
+            parser.parse(existingContent);
+
+            // when
+            const result = parser.edit(2, 0, 2, 0, '  ');
+            const events = result.events;
+            const errors = result.errors;
+
+            // then
+            expect(events).to.have.deep.ordered.members(
+                [
+                    <EditNodeEvent> {name: EditNodeEvent.NAME, id: 3, parentId: 2, text: "childB"},
+                ]
+            );
+        });
 
         it('Should delete the first child', () => {
             // given
@@ -594,7 +640,6 @@ describe('Parser Test', () => {
                 ]
             );
         });
-
         
         it('Should handle a complex change', () => {
             // given
@@ -647,6 +692,7 @@ describe('Parser Test', () => {
                 ]
             );
         });
+
     });
 
 });

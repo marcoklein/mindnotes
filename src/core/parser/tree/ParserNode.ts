@@ -3,7 +3,7 @@ import { LineParser } from "../LineParser";
 import { ParserTree } from "./ParserTree";
 import { LEXEM_EMPTY_LINE, LEXEM_NODE_TEXT } from "../lexer/LexemType";
 import { parserLogger } from "../logger.parser";
-import { AddNodeEvent } from "../../events/EventTypes";
+import { AddNodeEvent, EditNodeEvent } from "../../events/EventTypes";
 const log = parserLogger('node');
 
 
@@ -78,7 +78,8 @@ export class ParserNode {
         } else {
             // handle indentation change
             if (this.indentation !== lineIndent) {
-                lineParser.changeNodeIndentation(this, lineIndent);
+                this.changeNodeIndentation(lineParser, lineIndent);
+                this.indentation = lineIndent;
             }
 
             // change to the node head
@@ -114,5 +115,65 @@ export class ParserNode {
             log.warn('Unhandled token: ', token?.type, token?.content);
         }
     }
+
+    
+    private changeNodeIndentation(lineParser: LineParser, newIndent: number) {
+        log.debug('Node indentation update');
+        if (this.indentation < newIndent) {
+            // increase level -> move as child of predecessor
+            if (this.predecessor) {
+                if (this.predecessor.indentation === this.indentation) {
+                    log.debug('Moving to new node.');
+                    this.parent = this.predecessor;
+                    // TODO update node data for siblings
+                } else {
+                    lineParser.pushError('NoPrecedingSibling', 'Cannot update indentation.');
+                    return;
+                }
+            } else {
+                this.parent = undefined;
+            }
+            this.parent = this.predecessor;
+            const event = new EditNodeEvent(this.id, this.parent?.id, this.headText);
+            lineParser.pushEvent(event);
+        } else if (this.indentation > newIndent) {
+            // decrease level until we find matching parent
+            let newParent = this.parent;
+            if (newParent) {
+                // go to next parent until we find one with same indentation
+                // may be that we are still under the same parent
+                while (newParent && newParent.indentation >= newIndent)  {
+                    newParent = newParent.parent;
+                }
+                // verify it that it is the exact indentation
+                /* TODO test if we are on same indentation with new siblings
+                if (newParent && newParent.indentation !== newIndent) {
+                    log.error('No parent on same indentation level: indentation=%i, parentIndent=%i', this.indentation, newParent.indentation);
+                    lineParser.pushError('NoPrecedingSibling', 'Cannot update indentation.');
+                    return;
+                } else {*/
+                    log.debug('Moving node up');
+
+                    // update siblings
+                    // TODO update "surroundings"
+                    /*if (this.predecessor) {
+                        this.predecessor.successor = this.predecessor;
+                    }
+                    if (this.successor) {
+                        this.successor = this.predecessor;
+                    }
+                    // we add/insert this node as the successor of the new parent
+                    if (newParent) {
+                        newParent
+                    }*/
+                    // TODO update siblings
+                    this.parent = newParent;
+                //}
+            }
+            const event = new EditNodeEvent(this.id, newParent?.id, this.headText);
+            lineParser.pushEvent(event);
+        }
+    }
+    
 
 }

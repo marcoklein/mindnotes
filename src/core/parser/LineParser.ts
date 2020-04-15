@@ -176,42 +176,6 @@ export class LineParser {
         }
     }
 
-    changeNodeIndentation(node: ParserNode, newIndent: number) {
-        log.debug('Node indentation update');
-        if (node.indentation < newIndent) {
-            // increase level -> move as child of predecessor
-            if (node.predecessor) {
-                if (node.predecessor.indentation === node.indentation) {
-                    log.debug('Moving to new node.');
-                    node.parent = node.predecessor;
-                    const event = new EditNodeEvent(node.id, node.parent?.id, node.headText);
-                    this.parsedLine.events.push(event);
-                } else {
-                    this.pushError('NoPrecedingSibling', 'Cannot update indentation.');
-                    return;
-                }
-            } else {
-                node.parent = undefined;
-            }
-            node.parent = node.predecessor;
-        } else if (node.indentation > newIndent) {
-            // decrease level -> move as sibling of parent
-            if (node.parent) {
-                if (node.parent.indentation === node.indentation) {
-                    log.debug('Moving one parent up');
-                    node.parent = node.predecessor;
-                } else {
-                    this.pushError('NoPrecedingSibling', 'Cannot update indentation.');
-                    return;
-                }
-            } else {
-                node.parent = undefined;
-            }
-            const event = new EditNodeEvent(node.id, node.parent?.id, node.headText);
-            this.parsedLine.events.push(event);
-        }
-    }
-    
     private createNewParsedLine(line: number, content: string) {
         return {
             line,
