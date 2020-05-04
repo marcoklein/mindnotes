@@ -38,6 +38,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "d3": "^5.15.1"
+    "d3": "^5.15.1",
+    "jsondiffpatch": "^0.4.1"
   }
 }

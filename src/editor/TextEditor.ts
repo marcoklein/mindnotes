@@ -1,6 +1,6 @@
 import { SerializedEventEmitter } from "../core/events/EventHandler";
 import { editorLogger } from "../logger";
-import { MindNotesParser } from "../core/parser/MindNotesParser";
+import { TextParser } from "../core/parser/TextParser";
 
 const log = editorLogger('editor');
 
@@ -11,7 +11,7 @@ document.addEventListener('selectionchange', () => {
 
 export class TextEditor {
 
-    parser: MindNotesParser = new MindNotesParser();
+    parser = new TextParser();
     textArea: HTMLTextAreaElement;
     events: SerializedEventEmitter;
     
@@ -39,9 +39,11 @@ export class TextEditor {
             log.debug('target %s, selectionStart %i, selectionEnd %i , rows %i', event.data, event.target.selectionStart, event.target.selectionEnd, event.target.rows);
 
             // debounce complete reparsing (setTimeout in new thread)
-            this.parser.parse(area.value).events.forEach(event => {
-                this.events.emit(event);
-            })
+            // TODO do parsing
+            // this.parser.parse(area.value)
+            // this.parser.parse(area.value).events.forEach(event => {
+            //     this.events.emit(event);
+            // })
         }, false);
     }
 }
