@@ -12,10 +12,11 @@ export interface LexerLineResult {
 /**
  * The Lexer extracts tokens, called lexemes of each line.
  */
-export class MindNotesLexer {
+export abstract class MindNotesLexer {
 
-
-    public tokenizeLine(inputLine: string): LexerLineResult {
+    constructor() {}
+    
+    static tokenizeLine(inputLine: string): LexerLineResult {
         let curStart = 0;
         const result = {
             lexems: [],

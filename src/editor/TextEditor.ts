@@ -1,6 +1,6 @@
 import { SerializedEventEmitter } from "../core/events/EventHandler";
 import { editorLogger } from "../logger";
-import { MindNotesParser } from "../core/parser/MindNotesParser";
+import { MindNotesParser } from "../core/parser/ignore/MindNotesParser";
 
 const log = editorLogger('editor');
 

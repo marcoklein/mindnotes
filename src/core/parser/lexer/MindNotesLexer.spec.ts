@@ -5,8 +5,6 @@ import { LEXEM_EMPTY_LINE, LEXEM_NODE_TEXT, LEXEM_INDENT, LEXEM_MULTILINE_INDICA
 
 
 describe('Lexer Test', () => {
-
-    let lexer = new MindNotesLexer();
     
     it('should create empty lexems', () => {
         // given
@@ -18,7 +16,7 @@ describe('Lexer Test', () => {
         ];
 
         // when
-        const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
+        const results = lines.map(MindNotesLexer.tokenizeLine).map(r => r.lexems);
 
         // then
         expect(results).to.have.lengthOf(4);
@@ -47,7 +45,7 @@ describe('Lexer Test', () => {
         ];
 
         // when
-        const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
+        const results = lines.map(MindNotesLexer.tokenizeLine).map(r => r.lexems);
 
         // then
         // 'node   '
@@ -113,7 +111,7 @@ describe('Lexer Test', () => {
         ];
 
         // when
-        const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
+        const results = lines.map(MindNotesLexer.tokenizeLine).map(r => r.lexems);
 
         // then
         expect(results).to.have.lengthOf(5);
