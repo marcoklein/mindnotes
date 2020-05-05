@@ -1,18 +1,9 @@
-import { ParserNode, ParserTree } from "../core/parser/ParserTree";
-import { MindmapView } from "./graph/MindmapView";
-import { GraphNode } from "./graph/GraphNode";
-import * as jsondiffpatch from "jsondiffpatch";
+import { ParserNode } from "../core/parser/ParserTree";
 import { rendererLogger } from "../logger";
+import { GraphNode } from "./graph/GraphNode";
+import { MindmapView } from "./graph/MindmapView";
 
 const log = rendererLogger('interpreter');
-
-
-// export interface test implements jsondiffpatch.Filter<jsondiffpatch.PatchContext> {
-//     (context: jsondiffpatch.PatchContext): => {
-
-//     };
-//     filterName = 'bla';
-// }
 
 /**
  * Information about renderer tree.
@@ -20,13 +11,6 @@ const log = rendererLogger('interpreter');
 interface RendererGraphNode {
     graphNode: GraphNode | undefined;
     children: RendererGraphNode[];
-}
-
-interface DiffMessage {
-    attributes: {
-        text: string[]
-    };
-    children: {[index: string]: DiffMessage};
 }
 
 /**
@@ -38,8 +22,6 @@ export class ParserTreeInterpreter {
     private lastId = 0;
 
     private root: RendererGraphNode | undefined;
-
-    
 
     constructor(view: MindmapView) {
         this.view = view;
@@ -80,6 +62,13 @@ export class ParserTreeInterpreter {
         return curNode;
     }
 
+    private deleteNode(node: RendererGraphNode) {
+        node.graphNode?.remove();
+        node.children.forEach(child => {
+            this.deleteNode(child);
+        });
+    }
+
     /**
      * Traverse through delta message and patch renderer tree.
      */
@@ -113,15 +102,17 @@ export class ParserTreeInterpreter {
                 log.debug('Traversing children');
                 Object.keys(delta.children).forEach((key: any) => {
                     log.trace('Child key %s', key);
-                    if (/\d+/.test(key)) {
+                    if (/^\d+$/.test(key)) {
                         log.trace('Existing child');
                         // existing array element
                         let childDelta = delta.children[key];
                         definedCurNode.children[key] = this.patchDelta(definedCurNode.children[key], curNode, childDelta);
-                    } else if (/_\d+/.test(key)) {
+                    } else if (/^_\d+$/.test(key)) {
                         log.trace('Deleted child');
+                        const deletionIndex = Number.parseInt(key.split(/_(\d+)/)[1]);
                         // deleting existing array element
-                        throw new Error('Deletion not supported yet');
+                        const deletedNode = definedCurNode.children.splice(deletionIndex, 1)[0];
+                        this.deleteNode(deletedNode);
                     }
                 });
             }
@@ -136,6 +127,5 @@ export class ParserTreeInterpreter {
     private generateId(): string {
         return '' + this.lastId++;
     }
-
 
 }

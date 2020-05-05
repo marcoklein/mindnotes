@@ -17,6 +17,8 @@ export class TextEditor {
     textArea: HTMLTextAreaElement;
     network: NetworkAdapter;
     previousTree: ParserTree | undefined = undefined;
+
+    debounceTimer: any;
     
     constructor(network: NetworkAdapter) {
         this.network = network;
@@ -38,13 +40,18 @@ export class TextEditor {
     }
 
     private triggerContentChange() {
-            // TODO debounce complete reparsing (setTimeout in new thread)
-            const tree = this.parser.parse(this.textArea.value);
-
-            // send diff
-            log.debug('sending diff state');
-            log.debug('cur state %s', JSON.stringify(tree));
-            this.network.send(jsondiffpatch.diff(this.previousTree, tree));
-            this.previousTree = tree;
+        if (!this.debounceTimer) {
+            this.debounceTimer = setTimeout(() => {
+                this.debounceTimer = undefined;
+                // TODO debounce complete reparsing (setTimeout in new thread)
+                const tree = this.parser.parse(this.textArea.value);
+        
+                // send diff
+                log.debug('sending diff state');
+                log.debug('cur state %s', JSON.stringify(tree));
+                this.network.send(jsondiffpatch.diff(this.previousTree, tree));
+                this.previousTree = tree;
+            }, 100);
+        }
     }
 }
