@@ -1,6 +1,9 @@
 import { GraphNode } from "./GraphNode";
 import { GraphLinkData } from "./GraphLink";
 import { MindmapView } from "./MindmapView";
+import { rendererLogger } from "../../logger";
+
+const log = rendererLogger('graphdata');
 
 /**
  * Data for nodes and links of the graph.
@@ -17,12 +20,12 @@ export class GraphData {
     }
 
     public pushNode(node: GraphNode) {
-        console.log('Pushed node ', node);
+        log.debug('Pushed node ', node);
         this.nodesMap[node.id] = node;
     }
     
     public pushLink(link: GraphLinkData) {
-        console.log('Pushed link ', link);
+        log.debug('Pushed link ', link);
         this.linksMap[link.id] = link;
     }
 

@@ -6,11 +6,6 @@ import { editorLogger } from "../logger";
 
 const log = editorLogger('editor');
 
-
-document.addEventListener('selectionchange', () => {
-    console.log('on selection change');
-});
-
 export class TextEditor {
 
     parser = new TextParser();
