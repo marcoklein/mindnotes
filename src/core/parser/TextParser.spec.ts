@@ -39,8 +39,7 @@ describe('TextParser Test', () => {
                     },
                 ],
                 errors: [],
-
-            }
+            };
             expect(result).to.deep.equal(expectedResult);
         });
         
@@ -125,7 +124,7 @@ describe('TextParser Test', () => {
             builder.pushChild(2, 'childB');
             builder.popToIndent(0);
             builder.pushSibling(0, 'sibling');
-            expect(result).to.deep.equal( builder.build());
+            expect(result).to.deep.equal(builder.build());
         });
     });
 

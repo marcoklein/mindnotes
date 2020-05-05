@@ -57,7 +57,7 @@ export class TextParser {
         log.debug('indentation=%i', indent);
 
         // extract previous state
-        const activeNode = builder.getActive();
+        const activeNode = builder.getTopNode();
         log.debug('active indentation=%i', activeNode.indentation);
 
         if (token.type === LEXEM_EMPTY_LINE) {

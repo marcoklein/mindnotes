@@ -1,6 +1,7 @@
-import { SerializedEventEmitter } from "./core/events/EventHandler";
-import { EventRenderer } from "./renderer/EventRenderer";
+
+import { MindnotesRenderer } from "./renderer/EventRenderer";
 import { TextEditor } from "./editor/TextEditor";
+import { LocalNetworkAdapter } from "./core/network/LocalTransmitter";
 
 /**
  * Initialize TextArea and Renderer for Mindnotes.
@@ -8,8 +9,13 @@ import { TextEditor } from "./editor/TextEditor";
  */
 (() => {
     
-    const emitter = new SerializedEventEmitter();
-    new EventRenderer(emitter);
-    new TextEditor(emitter);
+    const rendererTransmitter = new LocalNetworkAdapter();
+    const editorTransmitter = new LocalNetworkAdapter();
+
+    rendererTransmitter.peer = editorTransmitter;
+    editorTransmitter.peer = rendererTransmitter;
+
+    new MindnotesRenderer(rendererTransmitter);
+    new TextEditor(editorTransmitter);
 
 })();

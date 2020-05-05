@@ -13,8 +13,7 @@ export interface ParserNode {
     indentation: number;
     attributes: NodeAttributes;
     children: ParserNode[];
-    errors
-    : ParserError[];
+    errors: ParserError[];
 }
 
 export interface ParserTree extends ParserNode {

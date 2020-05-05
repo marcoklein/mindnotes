@@ -26,10 +26,11 @@ export class ParserTreeBuilder {
      * Returns undefined, if no matching indentation is found.
      */
     popToIndent(indent: number): ParserNode | undefined {
-        let parent = this.nodeStack.pop();
-        // loop through stack, until we hit sibling!
-        while (parent && parent.indentation < indent) {
-            parent = this.nodeStack.pop();
+        let parent = this.getParentNode();
+        // loop through stack, until we hit sibling with same indentation
+        while (parent && parent.indentation >= indent) {
+            this.nodeStack.pop();
+            parent = this.getParentNode();
         }
         return parent;
     }
@@ -44,8 +45,10 @@ export class ParserTreeBuilder {
         const sibling = this.newEmptyNode();
         sibling.indentation = indent;
         sibling.attributes.text = text;
+        log.info('prev on stack:', this.nodeStack[this.nodeStack.length - 1].attributes.text);
         this.nodeStack[this.nodeStack.length - 1] = sibling;
         this.nodeStack[this.nodeStack.length - 2].children.push(sibling);
+        log.info('pushed sibling as child of', this.nodeStack[this.nodeStack.length - 2].attributes.text);
         return this;
     }
 
@@ -67,8 +70,12 @@ export class ParserTreeBuilder {
     /**
      * Currently active node.
      */
-    getActive() {
+    getTopNode() {
         return this.nodeStack[this.nodeStack.length - 1];
+    }
+
+    private getParentNode() {
+        return this.nodeStack[this.nodeStack.length - 2];
     }
 
     /**
