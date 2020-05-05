@@ -49,7 +49,8 @@ export class TextEditor {
                 // send diff
                 log.debug('sending diff state');
                 log.debug('cur state %s', JSON.stringify(tree));
-                this.network.send(jsondiffpatch.diff(this.previousTree, tree));
+                const delta = jsondiffpatch.diff(this.previousTree, tree);
+                if (delta) this.network.send(delta);
                 this.previousTree = tree;
             }, 100);
         }
