@@ -6,11 +6,6 @@ import { editorLogger } from "../logger";
 
 const log = editorLogger('editor');
 
-
-document.addEventListener('selectionchange', () => {
-    console.log('on selection change');
-});
-
 export class TextEditor {
 
     parser = new TextParser();
@@ -49,7 +44,8 @@ export class TextEditor {
                 // send diff
                 log.debug('sending diff state');
                 log.debug('cur state %s', JSON.stringify(tree));
-                this.network.send(jsondiffpatch.diff(this.previousTree, tree));
+                const delta = jsondiffpatch.diff(this.previousTree, tree);
+                if (delta) this.network.send(delta);
                 this.previousTree = tree;
             }, 100);
         }
