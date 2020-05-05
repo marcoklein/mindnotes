@@ -1,61 +1,59 @@
 
 import { MindmapView } from "./graph/MindmapView";
-import { SerializedEventEmitter } from "../core/events/EventHandler";
-import { AddNodeEvent, EditNodeEvent, DeleteNodeEvent } from "../core/events/EventTypes";
+import { NetworkAdapter } from "../core/network/AbstractNetworkAdapter";
+import { rendererLogger } from "../logger";
+import * as jsondiffpatch from "jsondiffpatch";
+import { ParserTreeInterpreter } from "./ParserTreeInterpreter";
+import { ParserTree } from "../core/parser/ParserTree";
+
+const log = rendererLogger('renderer');
 
 /**
  * Handles incoming NodeEvents and applies them to the Mindmap.
  */
-export class EventRenderer {
+export class MindnotesRenderer {
 
-    private eventHandler: SerializedEventEmitter;
+    private network: NetworkAdapter;
     private mindmap: MindmapView;
+    private interpreter: ParserTreeInterpreter;
 
-    constructor(eventHandler: SerializedEventEmitter) {
-        this.eventHandler = eventHandler;
+    constructor(network: NetworkAdapter) {
+        this.network = network;
         this.initEventHandlers();
         this.mindmap = this.initMindmap();
+        this.interpreter = new ParserTreeInterpreter(this.mindmap);
     }
 
     private initEventHandlers() {
-        this.eventHandler.registerHandler(AddNodeEvent.NAME, this.handlers.addNodeEvent);
-        this.eventHandler.registerHandler(EditNodeEvent.NAME, this.handlers.editNodeEvent);
-        this.eventHandler.registerHandler(DeleteNodeEvent.NAME, this.handlers.deleteNodeEvent);
+        this.network.addCallback(this.messageListener);
     }
 
-    private handlers = {
-        addNodeEvent: (event: AddNodeEvent) => {
-            console.log('Received event in handler: ', event);
-            const parentId = event.parentId !== undefined ? '' + event.parentId : undefined;
-            this.mindmap.addNewNode('' + event.id, event.text).changeParent(parentId);
-        },
-        editNodeEvent: (event: EditNodeEvent) => {
-            console.log('Received event in handler: ', event);
-            // find node
-            const node = this.mindmap.getNode('' + event.id);
-            if (!node) {
-                console.error('No Node with id ' + event.id);
-                return;
-            }
-            node.changeParent(event.parentId !== undefined ? '' + event.parentId : undefined);
-            node.changeText(event.text, 0);
-        },
-        deleteNodeEvent: (event: DeleteNodeEvent) => {
-            console.log('Received event in handler: ', event);
-            // find node
-            const node = this.mindmap.getNode('' + event.id);
-            if (!node) {
-                console.error('No Node with id ' + event.id);
-                return;
-            }
-            node.remove();
-        }
+    private messageListener = (message: any) => {
+        log.debug('Received diff message on renderer.');
+        log.debug(JSON.stringify(message));
+        this.applyDiff(message);
     };
 
     private initMindmap() {
         let mindmap = new MindmapView();
-
         return mindmap;
+    }
+
+    private applyDiff(message: any) {
+        // interpret patch message
+        this.interpreter.patch(message);
+    }
+
+    private updateNode() {
+        
+    }
+
+    private addNode() {
+
+    }
+
+    private removeNode() {
+
     }
 
 }
