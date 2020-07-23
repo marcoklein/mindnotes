@@ -1038,4 +1038,4 @@ var t,e=arguments[3];function n(t){return(n="function"==typeof Symbol&&"symbol"=
 },{"./AbstractNetworkAdapter":"da95"}],"QCba":[function(require,module,exports) {
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("./renderer/EventRenderer"),r=require("./editor/TextEditor"),t=require("./core/network/LocalTransmitter");!function(){var n=new t.LocalNetworkAdapter,o=new t.LocalNetworkAdapter;n.peer=o,o.peer=n,new e.MindnotesRenderer(n),new r.TextEditor(o)}();
 },{"./renderer/EventRenderer":"i9Ww","./editor/TextEditor":"FKBH","./core/network/LocalTransmitter":"Dmoc"}]},{},["QCba"], null)
-//# sourceMappingURL=src.c274bc4f.js.map
+//# sourceMappingURL=src.f3d6c6d1.js.map
