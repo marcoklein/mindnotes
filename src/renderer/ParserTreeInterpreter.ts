@@ -120,7 +120,7 @@ export class ParserTreeInterpreter {
                     }
                 });
 
-                // clean up delted children
+                // clean up deleted children
                 definedCurNode.children = definedCurNode.children.filter(child => child !== undefined);
             }
 
