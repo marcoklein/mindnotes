@@ -4,6 +4,20 @@
 # mind-map-notes
 Text driven mind map creation.
 
+# Getting Started
+
+## Development
+
+Install dependencies
+```
+npm install
+```
+
+Run the application
+```
+npm run serve
+```
+
 ## Project Structure
 
 ```
