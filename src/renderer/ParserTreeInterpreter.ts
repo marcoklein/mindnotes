@@ -10,7 +10,7 @@ const log = rendererLogger('interpreter');
  */
 interface RendererGraphNode {
     graphNode: GraphNode | undefined;
-    children: RendererGraphNode[];
+    children: Array<RendererGraphNode | undefined>;
 }
 
 /**
@@ -62,11 +62,16 @@ export class ParserTreeInterpreter {
         return curNode;
     }
 
-    private deleteNode(node: RendererGraphNode) {
+    private deleteNode(node: RendererGraphNode | undefined) {
+        if (node === undefined) {
+            throw new Error("Deleting undefined node.");
+        }
         node.graphNode?.remove();
-        node.children.forEach(child => {
-            this.deleteNode(child);
-        });
+        if (node.children) {
+            node.children.forEach(child => {
+                this.deleteNode(child);
+            });
+        }
     }
 
     /**
@@ -106,15 +111,21 @@ export class ParserTreeInterpreter {
                         log.trace('Existing child');
                         // existing array element
                         let childDelta = delta.children[key];
+                        definedCurNode.children = definedCurNode.children || [];
                         definedCurNode.children[key] = this.patchDelta(definedCurNode.children[key], curNode, childDelta);
                     } else if (/^_\d+$/.test(key)) {
                         log.trace('Deleted child');
                         const deletionIndex = Number.parseInt(key.split(/_(\d+)/)[1]);
                         // deleting existing array element
-                        const deletedNode = definedCurNode.children.splice(deletionIndex, 1)[0];
+                        definedCurNode.children = definedCurNode.children || [];
+                        const deletedNode = definedCurNode.children[deletionIndex];
+                        definedCurNode.children[deletionIndex] = undefined;
                         this.deleteNode(deletedNode);
                     }
                 });
+
+                // clean up delted children
+                definedCurNode.children = definedCurNode.children.filter(child => child !== undefined);
             }
 
         } else {
