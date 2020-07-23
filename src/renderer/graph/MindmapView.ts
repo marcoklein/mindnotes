@@ -17,7 +17,7 @@ export class MindmapView {
     private node: D3NodeType | undefined;
     private link: D3LinkType | undefined;
 
-    private lastSpawnX = 0;
+    private lastSpawnX = -1;
 
     /**
      * Graphics within SVG for rendering.
