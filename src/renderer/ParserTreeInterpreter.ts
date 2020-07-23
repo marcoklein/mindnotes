@@ -67,11 +67,9 @@ export class ParserTreeInterpreter {
             throw new Error("Deleting undefined node.");
         }
         node.graphNode?.remove();
-        if (node.children) {
-            node.children.forEach(child => {
-                this.deleteNode(child);
-            });
-        }
+        node.children.forEach(child => {
+            this.deleteNode(child);
+        });
     }
 
     /**
