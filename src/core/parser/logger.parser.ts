@@ -1,11 +1,10 @@
-import { coreLogger } from "../../logger";
-
+import { coreLogger } from '../../logger';
 
 /**
  * Creates a new logger with the provided label.
- * 
- * @param label 
+ *
+ * @param label
  */
 export const parserLogger = (label: string) => {
-    return coreLogger('parser.' + label);
+  return coreLogger('parser.' + label);
 };

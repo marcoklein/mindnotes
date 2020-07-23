@@ -10,7 +10,7 @@
     "build": "npm run clean && parcel build src/index.html -d out --public-url ./",
     "deploy": "npm run build && gh-pages -d out",
     "clean": "rimraf .cache out",
-    "format": "prettier --write ."
+    "format": "prettier --write src"
   },
   "repository": {
     "type": "git",

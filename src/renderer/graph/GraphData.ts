@@ -1,7 +1,7 @@
-import { GraphNode } from "./GraphNode";
-import { GraphLinkData } from "./GraphLink";
-import { MindmapView } from "./MindmapView";
-import { rendererLogger } from "../../logger";
+import { GraphNode } from './GraphNode';
+import { GraphLinkData } from './GraphLink';
+import { MindmapView } from './MindmapView';
+import { rendererLogger } from '../../logger';
 
 const log = rendererLogger('graphdata');
 
@@ -9,49 +9,47 @@ const log = rendererLogger('graphdata');
  * Data for nodes and links of the graph.
  */
 export class GraphData {
-    nodesMap: {[id: string]: GraphNode} = {};
-    linksMap: {[id: string]: GraphLinkData} = {};
+  nodesMap: { [id: string]: GraphNode } = {};
+  linksMap: { [id: string]: GraphLinkData } = {};
 
-    mindmap: MindmapView;
+  mindmap: MindmapView;
 
+  constructor(mindmap: MindmapView) {
+    this.mindmap = mindmap;
+  }
 
-    constructor(mindmap: MindmapView) {
-        this.mindmap = mindmap;
-    }
+  public pushNode(node: GraphNode) {
+    log.debug('Pushed node ', node);
+    this.nodesMap[node.id] = node;
+  }
 
-    public pushNode(node: GraphNode) {
-        log.debug('Pushed node ', node);
-        this.nodesMap[node.id] = node;
-    }
-    
-    public pushLink(link: GraphLinkData) {
-        log.debug('Pushed link ', link);
-        this.linksMap[link.id] = link;
-    }
+  public pushLink(link: GraphLinkData) {
+    log.debug('Pushed link ', link);
+    this.linksMap[link.id] = link;
+  }
 
-    getNodes(): GraphNode[] {
-        return Object.values(this.nodesMap);
-    }
+  getNodes(): GraphNode[] {
+    return Object.values(this.nodesMap);
+  }
 
-    getLinks(): GraphLinkData[] {
-        return Object.values(this.linksMap);
-    }
+  getLinks(): GraphLinkData[] {
+    return Object.values(this.linksMap);
+  }
 
-    /**
-     * Returns the link from the given source to given target node id.
-     * 
-     * @param sourceId 
-     * @param targetId 
-     */
-    getLinkFromNodeIds(sourceId: string, targetId: string): GraphLinkData {
-        return this.linksMap[sourceId + '-' + targetId];
-    }
+  /**
+   * Returns the link from the given source to given target node id.
+   *
+   * @param sourceId
+   * @param targetId
+   */
+  getLinkFromNodeIds(sourceId: string, targetId: string): GraphLinkData {
+    return this.linksMap[sourceId + '-' + targetId];
+  }
 
-    /**
-     * Restarts the mindmap simulation.
-     */
-    markAsDirty() {
-        this.mindmap.restartSimulation();
-    }
-
+  /**
+   * Restarts the mindmap simulation.
+   */
+  markAsDirty() {
+    this.mindmap.restartSimulation();
+  }
 }
