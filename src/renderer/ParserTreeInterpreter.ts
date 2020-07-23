@@ -109,13 +109,11 @@ export class ParserTreeInterpreter {
                         log.trace('Existing child');
                         // existing array element
                         let childDelta = delta.children[key];
-                        definedCurNode.children = definedCurNode.children || [];
                         definedCurNode.children[key] = this.patchDelta(definedCurNode.children[key], curNode, childDelta);
                     } else if (/^_\d+$/.test(key)) {
                         log.trace('Deleted child');
                         const deletionIndex = Number.parseInt(key.split(/_(\d+)/)[1]);
                         // deleting existing array element
-                        definedCurNode.children = definedCurNode.children || [];
                         const deletedNode = definedCurNode.children[deletionIndex];
                         definedCurNode.children[deletionIndex] = undefined;
                         this.deleteNode(deletedNode);
