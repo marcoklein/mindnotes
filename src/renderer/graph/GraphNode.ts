@@ -31,13 +31,15 @@ export class GraphNode implements d3.SimulationNodeDatum {
      * 
      * @param id Unique identifier for this GraphNode.
      * @param headText First line of text.
+     * @param x X-coordinate.
+     * @param y Y-coordinate.
      */
-    constructor(graphData: GraphData, id: string, headText: string) {
+    constructor(graphData: GraphData, id: string, headText: string, x: number, y: number) {
         this.graphData = graphData;
         this.id = id;
         this.textLines = [headText];
-        this.x = 0;
-        this.y = 0;
+        this.x = x;
+        this.y = y;
     }
 
     /**

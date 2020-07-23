@@ -17,6 +17,8 @@ export class MindmapView {
     private node: D3NodeType | undefined;
     private link: D3LinkType | undefined;
 
+    private lastSpawnX = 0;
+
     /**
      * Graphics within SVG for rendering.
      */
@@ -61,7 +63,8 @@ export class MindmapView {
      * @returns The created node.
      */
     public addNewNode(id: string, text: string): GraphNode {
-        const node = new GraphNode(this.graphData, id, text);
+        this.lastSpawnX++;
+        const node = new GraphNode(this.graphData, id, text, this.lastSpawnX, 0);
         this.graphData.pushNode(node);
         this.renderNodes();
         this.restartSimulation();
