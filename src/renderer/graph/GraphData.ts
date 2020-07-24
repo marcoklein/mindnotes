@@ -28,6 +28,10 @@ export class GraphData {
     this.linksMap[link.id] = link;
   }
 
+  getNodeById(id: string): GraphNode {
+    return this.nodesMap[id];
+  }
+
   getNodes(): GraphNode[] {
     return Object.values(this.nodesMap);
   }

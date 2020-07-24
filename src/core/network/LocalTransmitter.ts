@@ -13,7 +13,7 @@ export class LocalNetworkAdapter extends NetworkAdapter {
   }
 
   receive(message: any) {
-    this.listeners.forEach((callback) => {
+    this.listeners.forEach(callback => {
       callback(message);
     });
   }

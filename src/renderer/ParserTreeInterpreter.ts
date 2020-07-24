@@ -53,7 +53,7 @@ export class ParserTreeInterpreter {
 
     // insert children
     if (message.children) {
-      message.children.forEach((child) => {
+      message.children.forEach(child => {
         const childNode: RendererGraphNode = {
           children: [],
           graphNode: undefined,
@@ -70,7 +70,7 @@ export class ParserTreeInterpreter {
       throw new Error('Deleting undefined node.');
     }
     node.graphNode?.remove();
-    node.children.forEach((child) => {
+    node.children.forEach(child => {
       this.deleteNode(child);
     });
   }
@@ -128,7 +128,7 @@ export class ParserTreeInterpreter {
         });
 
         // clean up deleted children
-        definedCurNode.children = definedCurNode.children.filter((child) => child !== undefined);
+        definedCurNode.children = definedCurNode.children.filter(child => child !== undefined);
       }
     } else {
       throw new Error('Existing node is undefined but no insert retrieved.');

@@ -36,3 +36,10 @@ src/
 GitHub Pages is used to deploy the website. The used plugin `gh-pages` builds a fresh copy to the `gh-pages` branch by running the command `npm run deploy`.
 
 This setup will always deploy the website for the currently active branch.
+
+# Ideas
+
+## Breaking long text
+* Show dots (...) instead of whole text => Hover over text to show
+* Auto-break text
+* Make an option to hide or display (and auto-wrap) long text

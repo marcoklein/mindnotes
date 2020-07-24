@@ -11,11 +11,11 @@ describe('Lexer Test', () => {
     const lines = ['', ' ', '\t', '    \t \t  '];
 
     // when
-    const results = lines.map(lexer.tokenizeLine).map((r) => r.lexems);
+    const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
 
     // then
     expect(results).to.have.lengthOf(4);
-    results.forEach((result) => {
+    results.forEach(result => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].type).to.equal(LEXEM_EMPTY_LINE);
     });
@@ -34,7 +34,7 @@ describe('Lexer Test', () => {
     const lines = ['node   ', ' node', '\tnode  ', '    \t \t  node   '];
 
     // when
-    const results = lines.map(lexer.tokenizeLine).map((r) => r.lexems);
+    const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
 
     // then
     // 'node   '
@@ -97,7 +97,7 @@ describe('Lexer Test', () => {
     const lines = ['+node   ', ' + node', ' +', '+ ', '+'];
 
     // when
-    const results = lines.map(lexer.tokenizeLine).map((r) => r.lexems);
+    const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
 
     // then
     expect(results).to.have.lengthOf(5);

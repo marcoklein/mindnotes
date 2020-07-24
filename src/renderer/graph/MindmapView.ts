@@ -4,6 +4,7 @@ import { GraphLinkData } from './GraphLink';
 import { GraphData } from './GraphData';
 import { rendererLogger } from '../../logger';
 import { BrowserUtils } from './BrowserUtils';
+import { HexColorGenerator } from './HexColorGenerator';
 const log = rendererLogger('mindmap-view');
 
 type D3NodeType = d3.Selection<any, GraphNode, SVGGElement, unknown>;
@@ -27,6 +28,8 @@ export class MindmapView {
   private readonly graphData: GraphData;
 
   private simulation: d3.Simulation<GraphNode, GraphLinkData>;
+
+  private readonly colorGenerator = new HexColorGenerator();
 
   constructor() {
     // setup svg
@@ -67,7 +70,7 @@ export class MindmapView {
    */
   public addNewNode(id: string, text: string): GraphNode {
     this.lastSpawnX++;
-    const node = new GraphNode(this.graphData, id, text, this.lastSpawnX, 0);
+    const node = new GraphNode(this.graphData, id, text, this.lastSpawnX, 0, this.colorGenerator.generateRandomLightColor());
     this.graphData.pushNode(node);
     this.renderNodes();
     this.restartSimulation();
@@ -94,21 +97,23 @@ export class MindmapView {
    * @param height
    */
   private createGraphLayout(graphData: GraphData, width: number, height: number) {
-    return d3
-      .forceSimulation(graphData.getNodes())
-      .force('charge', d3.forceManyBody().strength(-3000))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('x', d3.forceX(width / 2).strength(1))
-      .force('y', d3.forceY(height / 2).strength(1))
-      .force(
-        'link',
-        d3
-          .forceLink(graphData.getLinks())
-          .id((d) => (<GraphNode>d).id)
-          .distance(100)
-          .strength(1)
-      )
-      .on('tick', this.ticked);
+    return (
+      d3
+        .forceSimulation(graphData.getNodes())
+        .force('charge', d3.forceManyBody().strength(-1000))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        // .force('x', d3.forceX(width / 2).strength(1))
+        // .force('y', d3.forceY(height / 2).strength(1))
+        .force(
+          'link',
+          d3
+            .forceLink(graphData.getLinks())
+            .id(d => (<GraphNode>d).id)
+            .distance(d => (<GraphLinkData>d).getDistance())
+            .strength(d => (<GraphLinkData>d).strength)
+        )
+        .on('tick', this.ticked)
+    );
   }
 
   public renderLinks() {
@@ -116,7 +121,7 @@ export class MindmapView {
       return;
     }
 
-    this.link = this.link.data(this.graphData.getLinks(), (l) => l.id);
+    this.link = this.link.data(this.graphData.getLinks(), l => l.id);
     this.link.exit().remove();
     this.link = this.link.enter().append('line').attr('stroke', '#000').attr('stroke-width', 1.5).merge(this.link);
   }
@@ -126,7 +131,7 @@ export class MindmapView {
       return;
     }
 
-    this.node = this.node.data(this.graphData.getNodes(), (n) => n.id);
+    this.node = this.node.data(this.graphData.getNodes(), n => n.id);
     this.node.exit().remove();
 
     const nodeGraphics = this.node.enter().append('g');
@@ -150,23 +155,23 @@ export class MindmapView {
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central')
       .attr('fill', 'black')
-      .text((n) => n.getText());
+      .text(n => n.getText());
     this.node = this.node.merge(nodeGraphics);
 
     // TODO wrap labels and use node().getComputedTextLength() - https://bl.ocks.org/mbostock/7555321
     const nodeRect: D3NodeType = this.node.selectAll('rect');
     nodeRect
-      .attr('width', (n) => BrowserUtils.calculateTextWidth(n.getText(), 14, 'sans-serif') + 10)
-      .attr('x', (n) => -BrowserUtils.calculateTextWidth(n.getText(), 14) / 2 - 5)
+      .attr('width', n => BrowserUtils.calculateTextWidth(n.getText(), 14, 'sans-serif') + 10)
+      .attr('x', n => -BrowserUtils.calculateTextWidth(n.getText(), 14) / 2 - 5)
       .attr('height', 30)
       .attr('y', -19)
       .attr('rx', 8)
       .attr('ry', 8)
-      .attr('fill', '#888');
+      .attr('fill', n => n.hexColor);
 
     // ensure text updates
     const texts: D3NodeType = this.node.selectAll('text');
-    texts.text((n) => n.getText());
+    texts.text(n => n.getText());
   }
 
   /**
@@ -186,17 +191,17 @@ export class MindmapView {
   };
 
   private updateNode = (node: D3NodeType) => {
-    node.attr('transform', (d) => {
+    node.attr('transform', d => {
       return 'translate(' + this.fixna(d.x) + ',' + this.fixna(d.y) + ')';
     });
   };
 
   private updateLink = (link: D3LinkType) => {
     link
-      .attr('x1', (d) => this.fixna(d.source.x))
-      .attr('y1', (d) => this.fixna(d.source.y))
-      .attr('x2', (d) => this.fixna(d.target.x))
-      .attr('y2', (d) => this.fixna(d.target.y));
+      .attr('x1', d => this.fixna(d.source.x))
+      .attr('y1', d => this.fixna(d.source.y))
+      .attr('x2', d => this.fixna(d.target.x))
+      .attr('y2', d => this.fixna(d.target.y));
   };
 
   private fixna(x: number | undefined) {

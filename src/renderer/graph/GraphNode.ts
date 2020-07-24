@@ -1,5 +1,7 @@
 import { GraphLinkData } from './GraphLink';
 import { GraphData } from './GraphData';
+import { rendererLogger } from '../../logger';
+const log = rendererLogger('graph-node');
 
 /**
  * The visual representation of a node within a graph.
@@ -26,6 +28,8 @@ export class GraphNode implements d3.SimulationNodeDatum {
   x: number;
   y: number;
 
+  hexColor: string;
+
   /**
    * Creates a new graph node instance.
    *
@@ -34,12 +38,13 @@ export class GraphNode implements d3.SimulationNodeDatum {
    * @param x X-coordinate.
    * @param y Y-coordinate.
    */
-  constructor(graphData: GraphData, id: string, headText: string, x: number, y: number) {
+  constructor(graphData: GraphData, id: string, headText: string, x: number, y: number, hexColor: string) {
     this.graphData = graphData;
     this.id = id;
     this.textLines = [headText];
     this.x = x;
     this.y = y;
+    this.hexColor = hexColor;
   }
 
   /**
@@ -77,6 +82,10 @@ export class GraphNode implements d3.SimulationNodeDatum {
     return this;
   }
 
+  getParentNode() {
+    return this._parentId !== undefined ? this.graphData.getNodeById(this._parentId) : undefined;
+  }
+
   /**
    * Changes the given text line.
    *
@@ -102,5 +111,13 @@ export class GraphNode implements d3.SimulationNodeDatum {
     delete this.graphData.nodesMap[this.id];
     this.graphData.mindmap.renderNodes();
     this.graphData.markAsDirty();
+  }
+
+  getLevel(): number {
+    const parentNode = this.getParentNode();
+    if (!parentNode) {
+      return 1;
+    }
+    return parentNode.getLevel() + 1;
   }
 }
