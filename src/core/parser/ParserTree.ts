@@ -6,6 +6,7 @@ export interface ParserError {
 export interface NodeAttributes {
   text?: string;
   multiline?: boolean;
+  custom?: {[key: string]: string};
 }
 
 export interface ParserNode {

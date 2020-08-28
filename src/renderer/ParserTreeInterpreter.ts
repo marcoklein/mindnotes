@@ -1,4 +1,4 @@
-import { ParserNode } from '../core/parser/ParserTree';
+import { ParserNode, NodeAttributes } from '../core/parser/ParserTree';
 import { rendererLogger } from '../logger';
 import { GraphNode } from './graph/GraphNode';
 import { MindmapView } from './graph/MindmapView';
@@ -11,6 +11,7 @@ const log = rendererLogger('interpreter');
 interface RendererGraphNode {
   graphNode: GraphNode | undefined;
   children: Array<RendererGraphNode | undefined>;
+  attributes: NodeAttributes;
 }
 
 /**
@@ -31,7 +32,7 @@ export class ParserTreeInterpreter {
    *
    * @param message
    */
-  patch(message: any) {
+  patch(message: ParserNode) {
     this.root = this.patchDelta(this.root, undefined, message);
   }
 
@@ -39,7 +40,7 @@ export class ParserTreeInterpreter {
     curNode: RendererGraphNode,
     parentNode: RendererGraphNode | undefined,
     message: ParserNode
-  ): RendererGraphNode {
+  ) {
     if (parentNode) {
       // insert graph node if a parent is defined
       let graphNode = this.view.addNewNode(this.generateId(), '');
@@ -57,6 +58,7 @@ export class ParserTreeInterpreter {
         const childNode: RendererGraphNode = {
           children: [],
           graphNode: undefined,
+          attributes: {},
         };
         curNode.children.push(this.insertNode(childNode, curNode, child));
       });
@@ -81,8 +83,8 @@ export class ParserTreeInterpreter {
   private patchDelta(
     curNode: RendererGraphNode | undefined,
     parentNode: RendererGraphNode | undefined,
-    delta: any
-  ): RendererGraphNode {
+    delta: ParserNode
+  ) {
     if (Array.isArray(delta)) {
       log.debug('Patching new node');
       // array means that something got inserted / replaced
@@ -90,6 +92,7 @@ export class ParserTreeInterpreter {
         curNode = {
           children: [],
           graphNode: undefined,
+          attributes: delta.attributes,
         };
         // insert new node
         curNode = this.insertNode(curNode, parentNode, delta[0]);

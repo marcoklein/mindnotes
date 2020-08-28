@@ -13,7 +13,7 @@ describe('HexColorGenerator Test', () => {
     // then
     expect(hexColor).to.equal('#888');
   });
-  
+
   it('should generate a random light hex color', () => {
     // given, when
     Math.random = () => 0.01;
@@ -22,5 +22,4 @@ describe('HexColorGenerator Test', () => {
     // then
     expect(hexColor).to.equal('#888');
   });
-
 });

@@ -70,7 +70,14 @@ export class MindmapView {
    */
   public addNewNode(id: string, text: string): GraphNode {
     this.lastSpawnX++;
-    const node = new GraphNode(this.graphData, id, text, this.lastSpawnX, 0, this.colorGenerator.generateRandomLightColor());
+    const node = new GraphNode(
+      this.graphData,
+      id,
+      text,
+      this.lastSpawnX,
+      0,
+      this.colorGenerator.generateRandomLightColor()
+    );
     this.graphData.pushNode(node);
     this.renderNodes();
     this.restartSimulation();

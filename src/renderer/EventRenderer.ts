@@ -41,10 +41,4 @@ export class MindnotesRenderer {
     // interpret patch message
     this.interpreter.patch(message);
   }
-
-  private updateNode() {}
-
-  private addNode() {}
-
-  private removeNode() {}
 }

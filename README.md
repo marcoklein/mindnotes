@@ -43,3 +43,15 @@ This setup will always deploy the website for the currently active branch.
 * Show dots (...) instead of whole text => Hover over text to show
 * Auto-break text
 * Make an option to hide or display (and auto-wrap) long text
+
+## Graphical representation
+* Make different colors on different levels
+* Different font sizes / styles on different levels
+
+## Configure global file options
+A file can start with options by placing them on top (no node-scope).
+```
+(fileOption=123)
+
+Root Node
+```

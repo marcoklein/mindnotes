@@ -1,7 +1,17 @@
 import { expect } from 'chai';
 import 'mocha';
 import { MindNotesLexer } from './MindNotesLexer';
-import { LEXEM_EMPTY_LINE, LEXEM_NODE_TEXT, LEXEM_INDENT, LEXEM_MULTILINE_INDICATOR } from './LexemType';
+import {
+  LEXEM_EMPTY_LINE,
+  LEXEM_NODE_TEXT,
+  LEXEM_INDENT,
+  LEXEM_MULTILINE_INDICATOR,
+  LEXEM_ATTRIBUTE_LIST_START,
+  LEXEM_ATTRIBUTE_NAME,
+  LEXEM_ATTRIBUTE_ASSIGN,
+  LEXEM_ATTRIBUTE_VALUE,
+  LEXEM_ATTRIBUTE_LIST_END,
+} from './LexemType';
 
 describe('Lexer Test', () => {
   let lexer = new MindNotesLexer();
@@ -167,6 +177,108 @@ describe('Lexer Test', () => {
         start: 0,
         end: 1,
         content: '+',
+      },
+    ]);
+  });
+
+  it('should return properties', () => {
+    // given
+    const lines = ['(prop=val)'];
+
+    // when
+    const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
+
+    // then
+    expect(results[0]).to.have.deep.members([
+      {
+        type: LEXEM_ATTRIBUTE_LIST_START,
+        start: 0,
+        end: 1,
+        content: '(',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_NAME,
+        start: 1,
+        end: 5,
+        content: 'prop',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_ASSIGN,
+        start: 5,
+        end: 6,
+        content: '=',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_VALUE,
+        start: 6,
+        end: 9,
+        content: 'val',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_LIST_END,
+        start: 9,
+        end: 10,
+        content: ')',
+      },
+    ]);
+  });
+
+  it('should return multiple properties', () => {
+    // given
+    const lines = ['(prop=val, prop2 = val2)'];
+
+    // when
+    const results = lines.map(lexer.tokenizeLine).map(r => r.lexems);
+
+    // then
+    expect(results[0]).to.have.deep.members([
+      {
+        type: LEXEM_ATTRIBUTE_LIST_START,
+        start: 0,
+        end: 1,
+        content: '(',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_NAME,
+        start: 1,
+        end: 5,
+        content: 'prop',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_ASSIGN,
+        start: 5,
+        end: 6,
+        content: '=',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_VALUE,
+        start: 6,
+        end: 9,
+        content: 'val',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_NAME,
+        start: 11,
+        end: 16,
+        content: 'prop2',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_ASSIGN,
+        start: 17,
+        end: 18,
+        content: '=',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_VALUE,
+        start: 19,
+        end: 23,
+        content: 'val2',
+      },
+      {
+        type: LEXEM_ATTRIBUTE_LIST_END,
+        start: 23,
+        end: 24,
+        content: ')',
       },
     ]);
   });
