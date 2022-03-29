@@ -40,7 +40,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "d3": "^5.16.0",
+    "d3": "^7.0.0",
     "jsondiffpatch": "^0.4.1"
   }
 }
