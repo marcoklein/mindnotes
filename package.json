@@ -41,6 +41,6 @@
   },
   "dependencies": {
     "d3": "^5.16.0",
-    "jsondiffpatch": "^0.5.0"
+    "jsondiffpatch": "^0.6.0"
   }
 }
